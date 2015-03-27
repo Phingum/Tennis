@@ -163,6 +163,11 @@ namespace TennisTournament
 			this.player1 = player1; this.player2 = player2;
 		}
 
+		public bool CheckGender()
+		{
+			return player1.PersonGender == player2.PersonGender ? true : false;
+		}
+
 		static void SingleSet(out int rand1, out int rand2)
 		{
 			rand1 = 0;
@@ -225,8 +230,18 @@ namespace TennisTournament
 			var ref1 = new Referee(new DateTime(2001, 08, 24), new DateTime(2014, 12, 24), "Kristoffer", "Mæng", "Nielsen", new DateTime(1991, 04, 01), "Dansk", Referee.Gender.Mand);
 			var ref2 = new Referee(new DateTime(2003, 10, 02), new DateTime(2015, 01, 19), "Niclas", "Allentoft", "Jørgensen", new DateTime(1991, 08, 10), "Dansk", Referee.Gender.Mand);
 			var tourn1 = new Tournament("Wimbledon", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15), 8, p1, p2, p3, p4, p5, p6, p7, p8);
+			var tourn2 = new Tournament("Wimbledon, I guess", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15));
 			//tourn1.ReturnPlayerList();
-			tourn1.PlayTournament(3);
+			//tourn1.PlayTournament(3);
+			/*tourn2.AddPlayer(p1);
+			tourn2.AddPlayer(p2);
+			tourn2.AddPlayer(p3);
+			tourn2.AddPlayer(p4);
+			tourn2.AddPlayer(p5);
+			tourn2.AddPlayer(p6);
+			tourn2.AddPlayer(p7);
+			tourn2.AddPlayer(p8);
+			tourn2.PlayTournament(3);*/
 			/*tourn1.AddReferee(ref1);
 			tourn1.AddReferee(ref2);
 			tourn1.ReturnRefereeList();
