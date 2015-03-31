@@ -118,12 +118,23 @@ namespace TennisTournament
 
 		public void ReturnRefereeList()
 		{
-			_tournamentReferees.ForEach(i => Console.Write("{0}, ", i.FirstName));
+			//_tournamentReferees.ForEach(i => Console.Write("{0}, ", i.FirstName));
+			foreach (Referee referee in _tournamentReferees) 
+			{
+				Console.WriteLine("{0} - is Game Master? {1}", referee.FirstName, referee.GamesMaster);
+			}
 		}
 
 		public void AddPlayer(TennisPlayer player)
 		{
-			_playerList.Add(player);
+			if(_playerList.Contains(player))
+			{
+				Console.WriteLine("Player is already competing at " + Name);
+			}
+			else 
+			{
+				_playerList.Add(player);
+			}
 		}
 
 		public void RemovePlayer(TennisPlayer player)
@@ -133,12 +144,33 @@ namespace TennisTournament
 
 		public void AddReferee(Referee referee)
 		{
-			_tournamentReferees.Add(referee);
+			if(_tournamentReferees.Contains(referee))
+			{
+				Console.WriteLine("Referee is already busy refereeing " + Name);
+			}
+			else
+			{
+				_tournamentReferees.Add(referee);
+			}
+			
 		}
 
 		public void RemoveReferee(Referee referee)
 		{
 			_tournamentReferees.Remove(referee);
+		}
+
+		public void AddGameMaster(Referee referee)
+		{
+			if(_tournamentReferees.Contains(referee)) 
+			{
+				referee.GamesMaster = true;
+			}
+			else
+			{
+				_tournamentReferees.Add(referee);
+				referee.GamesMaster = true;
+			}
 		}
 
 		public string ReturnWinner()
@@ -242,10 +274,12 @@ namespace TennisTournament
 			tourn2.AddPlayer(p7);
 			tourn2.AddPlayer(p8);
 			tourn2.PlayTournament(3);*/
-			/*tourn1.AddReferee(ref1);
+			tourn1.AddReferee(ref1);
 			tourn1.AddReferee(ref2);
 			tourn1.ReturnRefereeList();
-			tourn1.RemoveReferee(ref1);
+			tourn1.AddGameMaster(ref1);
+			tourn1.ReturnRefereeList();
+			/*tourn1.RemoveReferee(ref1);
 			tourn1.ReturnRefereeList();*/
 		} 
 	}
