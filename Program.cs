@@ -128,7 +128,7 @@ namespace TennisTournament
 				for (int i = 0; i < _roundWinners.Count; i = i+2)
 				{
 					Team winner_player;
-					var match = new TennisMatch(_playerList[i], _playerList[i+1]);
+					var match = new TennisMatch(_playerList[i], _playerList[i+1], TennisMatch.Type.MenSing);
 					match.RunMatch(noOfSets, out winner_player);
 					_tempPlayerList.Add(winner_player);
 				}
@@ -224,17 +224,72 @@ namespace TennisTournament
 	{
 		readonly Team team1;
 		readonly Team team2;
+		public enum Type { WomSing, MenSing, WomDoub, MenDoub, MixDoub }
+		public Type MatchType { get; set; }
 		static Random rand = new Random();
+		private int NoOfSets;
 
-		public TennisMatch(Team team1, Team team2)
+		public TennisMatch(Team team1, Team team2, Type typ)
 		{
-			this.team1 = team1; this.team2 = team2;
+			this.team1 = team1; this.team2 = team2; MatchType = typ;
 		}
 
-		/*public bool CheckGender()
+		public void CheckGender()
 		{
-			return team1.PersonGender == team2.PersonGender ? true : false;
-		}*/
+			TennisPlayer player1 = team1.ReturnP1();
+			TennisPlayer player2 = team1.ReturnP2();
+			TennisPlayer player3 = team2.ReturnP1();
+			TennisPlayer player4 = team2.ReturnP2();
+
+			if (MatchType == Type.WomSing) 
+			{
+				if (player1.PersonGender == TennisPlayer.Gender.Kvinde && player3.PersonGender == TennisPlayer.Gender.Kvinde) 
+				{
+					Console.WriteLine("Match is legal!");
+				}
+				else 
+				{
+					Console.WriteLine("Match is not legal!");	
+				}
+			}
+			else if (MatchType == Type.MenSing) 
+			{
+				if (player1.PersonGender == TennisPlayer.Gender.Mand && player3.PersonGender == TennisPlayer.Gender.Mand) 
+				{
+					Console.WriteLine("Match is legal!");
+				}
+				else 
+				{
+					Console.WriteLine("Match is not legal!");	
+				}
+			}
+			else if (MatchType == Type.WomDoub) 
+			{
+				if (player1.PersonGender == TennisPlayer.Gender.Kvinde && player2.PersonGender == TennisPlayer.Gender.Kvinde && player3.PersonGender == TennisPlayer.Gender.Kvinde && player4.PersonGender == TennisPlayer.Gender.Kvinde) 
+				{
+					Console.WriteLine("Match is legal!");
+				}
+				else 
+				{
+					Console.WriteLine("Match is not legal!");	
+				}	
+			}
+			else if (MatchType == Type.MenDoub) 
+			{
+				if (player1.PersonGender == TennisPlayer.Gender.Mand && player2.PersonGender == TennisPlayer.Gender.Mand && player3.PersonGender == TennisPlayer.Gender.Mand && player4.PersonGender == TennisPlayer.Gender.Mand) 
+				{
+					Console.WriteLine("Match is legal!");
+				}
+				else 
+				{
+					Console.WriteLine("Match is not legal!");	
+				}
+			}
+			else if (MatchType == Type.MixDoub) 
+			{
+
+			}
+		}
 
 		static void SingleSet(out int rand1, out int rand2)
 		{
@@ -311,11 +366,12 @@ namespace TennisTournament
 			var ref2 = new Referee(new DateTime(2003, 10, 02), new DateTime(2015, 01, 19), "Niclas", "Allentoft", "Jørgensen", new DateTime(1991, 08, 10), "Dansk", Referee.Gender.Mand);
 			var tourn1 = new Tournament("Wimbledon", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15), 4);
 			var tourn2 = new Tournament("Wimbledon, I guess", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15));
-			tourn1.AddPlayer(team1d);
+			var match1 = new TennisMatch(team1, team2, TennisMatch.Type.MenSing);
+			/*tourn1.AddPlayer(team1d);
 			tourn1.AddPlayer(team2d);
 			tourn1.AddPlayer(team3d);
 			tourn1.AddPlayer(team4d);
-			tourn1.PlayTournament(3);
+			tourn1.PlayTournament(3);*/
 			/*tourn2.AddPlayer(team1);
 			tourn2.AddPlayer(team2);
 			tourn2.AddPlayer(team3);
@@ -332,6 +388,7 @@ namespace TennisTournament
 			tourn1.ReturnRefereeList();
 			tourn1.RemoveReferee(ref1);
 			tourn1.ReturnRefereeList();*/
+			match1.CheckGender();
 		} 
 	}
 
