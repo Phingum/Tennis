@@ -115,7 +115,7 @@ namespace TennisTournament
 			}
 		}
 
-		public void PlayTournament(int noOfSets)
+		public void PlayTournament()
 		{
 			_roundWinners = _playerList;
 			for(int j = 0; j < NoOfRounds; j++)
@@ -129,7 +129,7 @@ namespace TennisTournament
 				{
 					Team winner_player;
 					var match = new TennisMatch(_playerList[i], _playerList[i+1], TennisMatch.Type.MenSing);
-					match.RunMatch(noOfSets, out winner_player);
+					match.RunMatch(out winner_player);
 					_tempPlayerList.Add(winner_player);
 				}
 				_roundWinners.Clear();
@@ -232,6 +232,14 @@ namespace TennisTournament
 		public TennisMatch(Team team1, Team team2, Type typ)
 		{
 			this.team1 = team1; this.team2 = team2; MatchType = typ;
+			if(typ == Type.WomSing | typ == Type.WomDoub)
+			{
+				NoOfSets = 3;
+			}
+			else 
+			{
+				NoOfSets = 5;	
+			}
 		}
 
 		public void CheckGender()
@@ -287,7 +295,14 @@ namespace TennisTournament
 			}
 			else if (MatchType == Type.MixDoub) 
 			{
-
+				if (player1.PersonGender != player2.PersonGender && player3.PersonGender != player4.PersonGender) 
+				{
+					Console.WriteLine("Match is legal!");
+				}
+				else 
+				{
+					Console.WriteLine("Match is not legal!");	
+				}
 			}
 		}
 
@@ -298,18 +313,18 @@ namespace TennisTournament
 
 			while (rand1 != 6 & rand2 != 6)
 			{
-				rand1 = rand.Next(0, 7);
-				rand2 = rand.Next(0, 7);
-				while (rand1 == rand2)
+				if(rand.Next(0,2) == 0)
 				{
-					rand1 = rand.Next(0, 7);
-					rand2 = rand.Next(0, 7);
+					rand1++;
 				}
-
+				else 
+				{
+					rand2++;	
+				}
 			}
 		}
 
-		public string RunMatch(int noOfSets, out Team winner_player)
+		public string RunMatch(out Team winner_player)
 		{
 			int rand1;
 			int rand2;
@@ -317,7 +332,7 @@ namespace TennisTournament
 			int cul_right = 0;
 			winner_player = team1;
 			Console.WriteLine("\n{0} vs {1}", team1.GetFirstName(), team2.GetFirstName());
-			for (int j = 0; j < noOfSets; j++)
+			for (int j = 0; j < NoOfSets; j++)
 			{
 				SingleSet(out rand1, out rand2);
 				if (rand1 == 6) { ++cul_left; } else { ++cul_right; }
@@ -372,7 +387,7 @@ namespace TennisTournament
 			tourn1.AddPlayer(team3d);
 			tourn1.AddPlayer(team4d);
 			tourn1.PlayTournament(3);*/
-			/*tourn2.AddPlayer(team1);
+			tourn2.AddPlayer(team1);
 			tourn2.AddPlayer(team2);
 			tourn2.AddPlayer(team3);
 			tourn2.AddPlayer(team4);
@@ -380,7 +395,7 @@ namespace TennisTournament
 			tourn2.AddPlayer(team6);
 			tourn2.AddPlayer(team7);
 			tourn2.AddPlayer(team8);
-			tourn2.PlayTournament(3);*/
+			tourn2.PlayTournament();
 			/*tourn1.AddReferee(ref1);
 			tourn1.AddReferee(ref2);
 			tourn1.ReturnRefereeList();
@@ -388,7 +403,6 @@ namespace TennisTournament
 			tourn1.ReturnRefereeList();
 			tourn1.RemoveReferee(ref1);
 			tourn1.ReturnRefereeList();*/
-			match1.CheckGender();
 		} 
 	}
 
