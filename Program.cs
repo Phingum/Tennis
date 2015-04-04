@@ -98,7 +98,7 @@ namespace TennisTournament
 		public int NoPlayers { get; set; }
 		public List<Team> _playerList = new List<Team>();
 		public List<Team> _roundWinners = new List<Team>();
-		public List<Team> _tempPlayerList = new List<Team>();
+		public List<Team> _roundPlayers = new List<Team>();
 		public List<Referee> _tournamentReferees = new List<Referee>();
 		private int NoOfRounds;
 		private Team tournamentWinner;
@@ -117,33 +117,27 @@ namespace TennisTournament
 
 		public void PlayTournament()
 		{
-			_roundWinners = _playerList;
+			_roundPlayers.AddRange(_playerList);
 			for(int j = 0; j < NoOfRounds; j++)
 			{
+				_roundWinners.Clear();
 				Console.WriteLine("ROUND {0}!", j+1);
 				Console.Write("PLAYERS: ");
-				_roundWinners.ForEach(i => Console.Write("{0}, ", i.GetFirstName()));
+				_roundPlayers.ForEach(i => Console.Write("{0}, ", i.GetFirstName()));
 				Console.WriteLine();
-				int NoOfMatches = _roundWinners.Count / 2;
-				for (int i = 0; i < _roundWinners.Count; i = i+2)
+				int NoOfMatches = _roundPlayers.Count / 2;
+				for (int i = 0; i < NoOfMatches; i++)
 				{
 					Team winner_player;
-					var match = new TennisMatch(_playerList[i], _playerList[i+1], TennisMatch.Type.MenSing);
+					var match = new TennisMatch(_roundPlayers[i*2], _roundPlayers[i*2+1], TennisMatch.Type.MenSing);
 					match.RunMatch(out winner_player);
-					_tempPlayerList.Add(winner_player);
+					_roundWinners.Add(winner_player);
 				}
-				_roundWinners.Clear();
-				for(int n = 0; n < _tempPlayerList.Count; n++)
-				{
-					_roundWinners.Add(_tempPlayerList[n]);
-				}
-				_tempPlayerList.Clear();
-				if (_roundWinners.Count == 1)
-				{
-					tournamentWinner = _roundWinners[0];
-					Console.WriteLine(ReturnWinner());
-				}
+				_roundPlayers.Clear();
+				_roundPlayers.AddRange(_roundWinners);
 			}
+			tournamentWinner = _roundWinners[0];
+			Console.WriteLine(ReturnWinner());
 		}
 
 		public void ReturnPlayerList()
@@ -175,6 +169,7 @@ namespace TennisTournament
 
 		public void RemovePlayer(Team player)
 		{
+			//Maybe check for existing players
 			_playerList.Remove(player);
 		}
 
@@ -193,6 +188,7 @@ namespace TennisTournament
 
 		public void RemoveReferee(Referee referee)
 		{
+			//Maybe check for existing referees
 			_tournamentReferees.Remove(referee);
 		}
 
@@ -209,9 +205,22 @@ namespace TennisTournament
 			}
 		}
 
+		public void RemoveGameMaster(Referee referee)
+		{
+			//Maybe set an attribute to Tournament that just holds the Game Master
+			referee.GamesMaster = false;
+			_tournamentReferees.Remove(referee);
+		}
+
 		public string ReturnWinner()
 		{
 			return string.Format("TOURNAMENT WINNER IS: {0}", tournamentWinner.GetFullName());
+		}
+
+		public bool IsOver()
+		{
+			//Check if Tournament is over.
+			return false;
 		}
 
 		public override string ToString()
@@ -227,7 +236,7 @@ namespace TennisTournament
 		public enum Type { WomSing, MenSing, WomDoub, MenDoub, MixDoub }
 		public Type MatchType { get; set; }
 		static Random rand = new Random();
-		private int NoOfSets;
+		readonly int NoOfSets;
 
 		public TennisMatch(Team team1, Team team2, Type typ)
 		{
@@ -353,11 +362,44 @@ namespace TennisTournament
 		}
 	}
 
+	public class TournamentSimulation 
+	{
+		public void SimulateTournament()
+		{
+			var p1 = new TennisPlayer("Morten", "Fredsøe", "Mølgaard", new DateTime(1993, 07, 21), "Dansk", TennisPlayer.Gender.Mand);
+			var p2 = new TennisPlayer("Simon", "van Deurs", "Brix", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p3 = new TennisPlayer("Hans", "Peter", "Jensen", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p4 = new TennisPlayer("Mikkel", "Olsen", "Lang", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p5 = new TennisPlayer("Rune", "Gammel", "Høj", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p6 = new TennisPlayer("Carsten", "Bruun", "Vestergaard", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p7 = new TennisPlayer("Jakob", "J.", "Jakobsen", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var p8 = new TennisPlayer("Anders", "A.", "Andersen", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
+			var team1 = new Team(p1);
+			var team2 = new Team(p2);
+			var team3 = new Team(p3);
+			var team4 = new Team(p4);
+			var team5 = new Team(p5);
+			var team6 = new Team(p6);
+			var team7 = new Team(p7);
+			var team8 = new Team(p8);
+			var tourn1 = new Tournament("Wimbledon", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15), 8);
+			tourn1.AddPlayer(team1);
+			tourn1.AddPlayer(team2);
+			tourn1.AddPlayer(team3);
+			tourn1.AddPlayer(team4);
+			tourn1.AddPlayer(team5);
+			tourn1.AddPlayer(team6);
+			tourn1.AddPlayer(team7);
+			tourn1.AddPlayer(team8);
+			tourn1.PlayTournament();
+		}
+	}
+
 	class Program 
 	{
 		static void Main(string[] args) 
 		{
-			var p1 = new TennisPlayer("Morten", "Fredsøe", "Mølgaard", new DateTime(1993, 07, 21), "Dansk", TennisPlayer.Gender.Mand);
+			/*var p1 = new TennisPlayer("Morten", "Fredsøe", "Mølgaard", new DateTime(1993, 07, 21), "Dansk", TennisPlayer.Gender.Mand);
 			var p2 = new TennisPlayer("Simon", "van Deurs", "Brix", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
 			var p3 = new TennisPlayer("Hans", "Peter", "Jensen", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
 			var p4 = new TennisPlayer("Mikkel", "Olsen", "Lang", new DateTime(1993, 10, 24), "Dansk", TennisPlayer.Gender.Mand);
@@ -376,17 +418,17 @@ namespace TennisTournament
 			var team1d = new Team(p1, p2);
 			var team2d = new Team(p3, p4);
 			var team3d = new Team(p5, p6);
-			var team4d = new Team(p7, p8);
+			var team4d = new Team(p7, p8);*/
 			var ref1 = new Referee(new DateTime(2001, 08, 24), new DateTime(2014, 12, 24), "Kristoffer", "Mæng", "Nielsen", new DateTime(1991, 04, 01), "Dansk", Referee.Gender.Mand);
 			var ref2 = new Referee(new DateTime(2003, 10, 02), new DateTime(2015, 01, 19), "Niclas", "Allentoft", "Jørgensen", new DateTime(1991, 08, 10), "Dansk", Referee.Gender.Mand);
-			var tourn1 = new Tournament("Wimbledon", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15), 4);
+			/*var tourn1 = new Tournament("Wimbledon", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15), 4);
 			var tourn2 = new Tournament("Wimbledon, I guess", 2015, new DateTime(2015, 01, 15), new DateTime(2015, 02, 15));
 			var match1 = new TennisMatch(team1, team2, TennisMatch.Type.MenSing);
-			/*tourn1.AddPlayer(team1d);
+			tourn1.AddPlayer(team1d);
 			tourn1.AddPlayer(team2d);
 			tourn1.AddPlayer(team3d);
 			tourn1.AddPlayer(team4d);
-			tourn1.PlayTournament(3);*/
+			tourn1.PlayTournament(3);
 			tourn2.AddPlayer(team1);
 			tourn2.AddPlayer(team2);
 			tourn2.AddPlayer(team3);
@@ -396,13 +438,17 @@ namespace TennisTournament
 			tourn2.AddPlayer(team7);
 			tourn2.AddPlayer(team8);
 			tourn2.PlayTournament();
-			/*tourn1.AddReferee(ref1);
+			tourn2.ReturnPlayerList();
+			tourn1.AddReferee(ref1);
 			tourn1.AddReferee(ref2);
 			tourn1.ReturnRefereeList();
 			tourn1.AddGameMaster(ref1);
 			tourn1.ReturnRefereeList();
 			tourn1.RemoveReferee(ref1);
 			tourn1.ReturnRefereeList();*/
+			var sim1 = new TournamentSimulation();
+			sim1.SimulateTournament();
+
 		} 
 	}
 
